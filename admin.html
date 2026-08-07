@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Tour Bookings</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-body: #0f172a;
+            /* Container Opacity reduced to 45% (rgba 0.45) for stronger glassmorphism */
+            --card-bg: rgba(255, 255, 255, 0.45);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: rgba(255, 255, 255, 0.35);
+            --danger-bg: rgba(254, 226, 226, 0.8);
+            --danger-text: #dc2626;
+            --danger-hover: rgba(254, 202, 202, 0.9);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            padding: 40px 20px; 
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* --- Background Picture (50% Opacity) --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .dashboard-wrapper { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* --- Header Section (Lower Opacity Container) --- */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 24px 30px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-title .icon-box {
+            width: 48px;
+            height: 48px;
+            background: rgba(224, 231, 255, 0.8);
+            color: var(--primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .header h1 { 
+            font-size: 1.5rem; 
+            font-weight: 700;
+            color: var(--text-main); 
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .refresh-btn { 
+            background-color: var(--primary); 
+            color: #fff; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: var(--radius-md); 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 0.875rem;
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .refresh-btn:hover { 
+            background-color: var(--primary-hover); 
+            transform: translateY(-1px);
+        }
+
+        /* --- Stat Box Containers (Lower Opacity) --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 20px 24px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .stat-card.blue .stat-icon { background: rgba(224, 242, 254, 0.85); color: #0284c7; }
+        .stat-card.purple .stat-icon { background: rgba(243, 232, 255, 0.85); color: #9333ea; }
+        .stat-card.green .stat-icon { background: rgba(220, 252, 231, 0.85); color: #16a34a; }
+
+        .stat-data h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .stat-data p {
+            font-size: 0.825rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* --- Main Content Box Container (Lower Opacity) --- */
+        .main-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+            padding: 24px;
+            overflow: hidden;
+        }
+
+        .controls { 
+            display: flex; 
+            gap: 16px; 
+            margin-bottom: 24px; 
+            flex-wrap: wrap; 
+        }
+
+        .search-wrapper { 
+            position: relative; 
+            flex: 1; 
+            min-width: 280px; 
+        }
+
+        .search-wrapper i { 
+            position: absolute; 
+            left: 14px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: var(--text-muted); 
+            font-size: 0.9rem;
+        }
+
+        .search-input { 
+            width: 100%; 
+            padding: 11px 14px 11px 42px; 
+            border: 1px solid var(--border-color); 
+            border-radius: var(--radius-md); 
+            font-size: 0.875rem; 
+            outline: none; 
+            background: rgba(255, 255, 255, 0.45); /* 45% Input Opacity */
+            color: var(--text-main);
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-input:focus { 
+            background: rgba(255, 255, 255, 0.75);
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15); 
+        }
+
+        .filter-select { 
+            padding: 11px 16px; 
+            border: 1px solid var(--border-color); 
+            border-radius: var(--radius-md); 
+            font-size: 0.875rem; 
+            background-color: rgba(255, 255, 255, 0.45); /* 45% Dropdown Opacity */
+            color: var(--text-main); 
+            outline: none; 
+            cursor: pointer; 
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus { 
+            border-color: var(--primary); 
+            background-color: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        /* --- Table Styling --- */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0;
+        }
+
+        th { 
+            background-color: rgba(255, 255, 255, 0.4); /* Reduced table header opacity */
+            color: var(--text-muted); 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            font-weight: 700;
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th:first-child { border-top-left-radius: var(--radius-sm); }
+        th:last-child { border-top-right-radius: var(--radius-sm); }
+
+        td { 
+            padding: 16px 18px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25); 
+            font-size: 0.875rem;
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr {
+            transition: background-color 0.15s ease;
+        }
+
+        tr:hover { 
+            background-color: rgba(255, 255, 255, 0.35); /* Subtle row hover */
+        }
+
+        /* Avatar & User Details */
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(224, 231, 255, 0.9);
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+        }
+
+        .badge { 
+            display: inline-flex; 
+            align-items: center;
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            background: rgba(224, 242, 254, 0.85); 
+            color: #0369a1; 
+            font-weight: 600; 
+            font-size: 0.775rem; 
+            border: 1px solid rgba(186, 230, 253, 0.8);
+        }
+
+        /* Delete Button */
+        .delete-btn { 
+            background: var(--danger-bg); 
+            color: var(--danger-text); 
+            border: 1px solid rgba(252, 165, 165, 0.8); 
+            padding: 6px 14px; 
+            border-radius: var(--radius-sm); 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 0.8rem; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+            transition: all 0.2s ease; 
+        }
+
+        .delete-btn:hover { 
+            background: var(--danger-hover); 
+            color: #991b1b; 
+            border-color: #f87171;
+            transform: scale(1.02);
+        }
+
+        .empty-msg { 
+            text-align: center; 
+            color: var(--text-muted); 
+            padding: 40px 0; 
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <div class="icon-box">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <h1>Tour Bookings Dashboard</h1>
+                    <p>Manage customer reservations and track live travel requests</p>
+                </div>
+            </div>
+            <button class="refresh-btn" id="refreshBtn">
+                <i class="fa-solid fa-rotate-right"></i> Refresh Data
+            </button>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-icon"><i class="fa-solid fa-ticket"></i></div>
+                <div class="stat-data">
+                    <h3 id="statTotalBookings">0</h3>
+                    <p>Total Bookings</p>
+                </div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                <div class="stat-data">
+                    <h3 id="statActiveTours">0</h3>
+                    <p>Active Tours</p>
+                </div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-data">
+                    <h3 id="statTotalGuests">0</h3>
+                    <p>Total Guests</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="main-card">
+            <!-- Filter Controls -->
+            <div class="controls">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search by customer name or email...">
+                </div>
+                <select id="tourFilter" class="filter-select">
+                    <option value="ALL">All Tours</option>
+                </select>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Tour Name</th>
+                            <th>Travel Date</th>
+                            <th>Guests</th>
+                            <th>Booked At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <!-- Bookings populate dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const tableBody = document.getElementById('bookingsTableBody');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const searchInput = document.getElementById('searchInput');
+        const tourFilter = document.getElementById('tourFilter');
+
+        // Metric Elements
+        const statTotalBookings = document.getElementById('statTotalBookings');
+        const statActiveTours = document.getElementById('statActiveTours');
+        const statTotalGuests = document.getElementById('statTotalGuests');
+
+        let allBookings = [];
+
+        async function fetchBookings() {
+            try {
+                const response = await fetch('/api/bookings');
+                allBookings = await response.json();
+
+                updateMetrics();
+                populateTourDropdown();
+                renderBookings();
+            } catch (err) {
+                console.error('Error loading bookings:', err);
+                tableBody.innerHTML = `<tr><td colspan="7" class="empty-msg" style="color: #ef4444;"><i class="fa-solid fa-circle-exclamation"></i> Failed to load bookings from server.</td></tr>`;
+            }
+        }
+
+        function updateMetrics() {
+            statTotalBookings.textContent = allBookings.length;
+            
+            const uniqueTours = new Set(allBookings.map(b => b.tourName).filter(Boolean));
+            statActiveTours.textContent = uniqueTours.size;
+
+            const totalGuests = allBookings.reduce((sum, b) => sum + (Number(b.guests) || 1), 0);
+            statTotalGuests.textContent = totalGuests;
+        }
+
+        function populateTourDropdown() {
+            const tours = [...new Set(allBookings.map(b => b.tourName).filter(Boolean))];
+            tourFilter.innerHTML = '<option value="ALL">All Tours</option>';
+            tours.forEach(tour => {
+                const option = document.createElement('option');
+                option.value = tour;
+                option.textContent = tour;
+                tourFilter.appendChild(option);
+            });
+        }
+
+        function getInitial(name) {
+            return name ? name.charAt(0).toUpperCase() : 'A';
+        }
+
+        function renderBookings() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedTour = tourFilter.value;
+
+            const filteredBookings = allBookings.filter(b => {
+                const matchesSearch = (b.name || '').toLowerCase().includes(searchTerm) ||
+                                      (b.email || '').toLowerCase().includes(searchTerm);
+                const matchesTour = selectedTour === 'ALL' || b.tourName === selectedTour;
+                return matchesSearch && matchesTour;
+            });
+
+            tableBody.innerHTML = '';
+
+            if (filteredBookings.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="empty-msg"><i class="fa-solid fa-box-open" style="margin-right: 8px;"></i> No matching bookings found.</td></tr>`;
+                return;
+            }
+
+            [...filteredBookings].reverse().forEach(b => {
+                const row = document.createElement('tr');
+                const bookedDate = b.createdAt ? new Date(b.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
+                const bookingId = b._id || b.id;
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="user-cell">
+                            <div class="avatar">${getInitial(b.name)}</div>
+                            <strong>${b.name || 'Anonymous'}</strong>
+                        </div>
+                    </td>
+                    <td style="color: var(--text-muted); font-weight: 500;">${b.email || 'N/A'}</td>
+                    <td><span class="badge"><i class="fa-solid fa-location-dot" style="margin-right: 4px; font-size: 0.7rem;"></i>${b.tourName || 'Standard Tour'}</span></td>
+                    <td>${b.date || 'N/A'}</td>
+                    <td><strong>${b.guests || 1}</strong></td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">${bookedDate}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteBooking('${bookingId}')">
+                            <i class="fa-solid fa-trash-can"></i> Delete
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Delete Handler
+        async function deleteBooking(id) {
+            if (!confirm('Are you sure you want to delete this booking?')) return;
+
+            try {
+                const response = await fetch(`/api/bookings/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success || response.ok) {
+                    fetchBookings();
+                } else {
+                    alert('Error: ' + (result.message || 'Could not delete booking.'));
+                }
+            } catch (err) {
+                console.error('Failed to delete booking:', err);
+                alert('Server error while trying to delete booking.');
+            }
+        }
+
+        searchInput.addEventListener('input', renderBookings);
+        tourFilter.addEventListener('change', renderBookings);
+        refreshBtn.addEventListener('click', fetchBookings);
+
+        document.addEventListener('DOMContentLoaded', fetchBookings);
+    </script>
+</body>
+</html>

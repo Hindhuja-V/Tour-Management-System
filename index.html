@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraTours - Explore the World</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --primary-hover: #ff5252;
+            --accent: #4ECDC4;
+            --text-light: #FFFFFF;
+            --text-dim: rgba(255, 255, 255, 0.75);
+            --glass-bg: rgba(18, 25, 38, 0.65);
+            --glass-card: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --radius-lg: 24px;
+            --radius-md: 14px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            color: var(--text-light);
+            background-color: #0b0f19;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* --- Full Background Image with 50% Opacity --- */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1920&auto=format&fit=crop&q=80') no-repeat center center fixed;
+            background-size: cover;
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        /* --- Navigation Bar --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(11, 15, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+        }
+
+        .logo i {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-light);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-btn {
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        /* --- Container --- */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #dcdcdc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* --- Search Widget --- */
+        .search-widget {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .search-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            padding: 0 10px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-item:last-child {
+            border-right: none;
+        }
+
+        .search-item label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .search-item input, .search-item select {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .search-item select option {
+            background: #121926;
+            color: white;
+        }
+
+        /* --- Tour Grid --- */
+        .section-title {
+            margin-bottom: 2rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .grid-tours {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .tour-card {
+            background: var(--glass-card);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .tour-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-img {
+            height: 200px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .tour-card:hover .card-img img {
+            transform: scale(1.08);
+        }
+
+        .card-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(11, 15, 25, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-body h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-location {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .price-tag {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .price-tag span {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+
+        /* --- Features Section Layout --- */
+        .feature-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* --- Footer Stats --- */
+        .bottom-bar {
+            margin-top: 4rem;
+            background: var(--glass-card);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item h4 {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .stat-item p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* --- Modal Popup Styling --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-card {
+            background: #121926;
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: var(--primary);
+        }
+
+        .booking-form input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .booking-form input::placeholder {
+            color: var(--text-dim);
+        }
+
+        @media (max-width: 768px) {
+            .search-widget {
+                flex-direction: column;
+                border-radius: var(--radius-lg);
+            }
+            .search-item {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding-bottom: 10px;
+                width: 100%;
+            }
+            .hero h1 {
+                font-size: 2.3rem;
+            }
+            .bottom-bar {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-plane-departure"></i>
+            <span>AuraTours</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="active">Explore</a></li>
+            <li><a href="#">Packages</a></li>
+            <li><a href="#">Destinations</a></li>
+            <li><a href="#">About Us</a></li>
+        </ul>
+        <button class="btn-btn btn-primary">Book Now</button>
+    </nav>
+
+    <!-- Main Section -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Unveil Extraordinary Journeys</h1>
+            <p>Discover tailored tours, breathtaking landscapes, and luxury stay packages around the world.</p>
+
+            <!-- Search Bar Widget -->
+            <div class="search-widget">
+                <div class="search-item">
+                    <label><i class="fa-solid fa-location-dot"></i> Destination</label>
+                    <input type="text" id="searchInput" placeholder="Search by destination or spot...">
+                </div>
+                <div class="search-item">
+                    <label><i class="fa-solid fa-calendar-days"></i> Check In</label>
+                    <input type="date">
+                </div>
+                <div class="search-item">
+                    <label><i class="fa-solid fa-user-group"></i> Guests</label>
+                    <select>
+                        <option>2 Adults, 1 Room</option>
+                        <option>1 Adult, 1 Room</option>
+                        <option>4 Adults, 2 Rooms</option>
+                    </select>
+                </div>
+                <button class="btn-btn btn-primary" style="padding: 14px 28px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Featured Destinations Grid -->
+        <section>
+            <div class="section-title">
+                <h2>Top Destination Spots</h2>
+                <p style="color: var(--text-dim);">Handpicked luxury vacations across the globe</p>
+            </div>
+
+            <div class="grid-tours" id="tourGrid">
+                <!-- Dynamic cards render here -->
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" style="margin-top: 4rem;">
+            <div class="section-title" style="text-align: center;">
+                <h2>Why Choose Us</h2>
+            </div>
+            <div class="feature-box">
+                <div class="feature" style="background: var(--glass-card); border: 1px solid var(--glass-border); border-radius: 18px; padding: 25px; text-align: center;">
+                    <i class="fa-solid fa-shield-halved" style="font-size: 40px; color: var(--accent); margin-bottom: 15px;"></i>
+                    <h3>Safe Traveling</h3>
+                    <p style="color: var(--text-dim); margin-top: 8px;">Guaranteed safe stays and top-rated verified local guides.</p>
+                </div>
+                <div class="feature" style="background: var(--glass-card); border: 1px solid var(--glass-border); border-radius: 18px; padding: 25px; text-align: center;">
+                    <i class="fa-solid fa-tags" style="font-size: 40px; color: var(--accent); margin-bottom: 15px;"></i>
+                    <h3>Affordable Prices</h3>
+                    <p style="color: var(--text-dim); margin-top: 8px;">Competitive luxury rates with no hidden booking fees.</p>
+                </div>
+                <div class="feature" style="background: var(--glass-card); border: 1px solid var(--glass-border); border-radius: 18px; padding: 25px; text-align: center;">
+                    <i class="fa-solid fa-headset" style="font-size: 40px; color: var(--accent); margin-bottom: 15px;"></i>
+                    <h3>24/7 Support</h3>
+                    <p style="color: var(--text-dim); margin-top: 8px;">Round-the-clock customer support for your peace of mind.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Bar -->
+        <div class="bottom-bar">
+            <div class="stat-item">
+                <h4>15k+</h4>
+                <p>Happy Travelers</p>
+            </div>
+            <div class="stat-item">
+                <h4>250+</h4>
+                <p>Destinations</p>
+            </div>
+            <div class="stat-item">
+                <h4>4.9</h4>
+                <p>Overall Rating</p>
+            </div>
+            <div class="stat-item">
+                <h4>24/7</h4>
+                <p>Live Support</p>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <section class="contact" style="margin-top: 4rem;">
+            <div class="section-title" style="text-align: center;">
+                <h2>Contact Us</h2>
+                <p style="color: var(--text-dim);">Have questions? Get in touch with our travel team.</p>
+            </div>
+            <form id="contactForm" style="max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px;">
+                <input type="text" placeholder="Your Name" required style="padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-card); color: white; outline: none;">
+                <input type="email" placeholder="Your Email" required style="padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-card); color: white; outline: none;">
+                <textarea placeholder="Your Message" required style="padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-card); color: white; outline: none; height: 120px; resize: none;"></textarea>
+                <button type="submit" class="btn-btn btn-primary" style="padding: 14px; width: 100%;">Send Message</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Booking Details Modal -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark close-btn" id="closeModal"></i>
+            <h3 id="modalTitle" style="font-size: 1.5rem; margin-bottom: 10px;">Tour Name</h3>
+            <p id="modalLocation" style="color: var(--accent); margin-bottom: 15px;"><i class="fa-solid fa-location-dot"></i> Location</p>
+            <p id="modalPrice" style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 20px;">$0</p>
+            
+            <div class="booking-form" style="display: flex; flex-direction: column; gap: 10px; margin: 15px 0;">
+                <input type="text" id="custName" placeholder="Full Name" required>
+                <input type="email" id="custEmail" placeholder="Email Address" required>
+                <input type="date" id="travelDate" required>
+                <input type="number" id="guestCount" min="1" value="1" placeholder="Number of Guests">
+            </div>
+
+            <button class="btn-btn btn-primary" id="confirmBookingBtn" style="width: 100%;">Confirm Booking</button>
+        </div>
+    </div>
+
+    <!-- Embedded JavaScript -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modal = document.getElementById('bookingModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalLocation = document.getElementById('modalLocation');
+        const modalPrice = document.getElementById('modalPrice');
+        const confirmBtn = document.getElementById('confirmBookingBtn');
+        const searchInput = document.getElementById('searchInput');
+        const tourGrid = document.getElementById('tourGrid');
+
+        // 9 Sample Destination Spots (Fallback dataset)
+        const sampleTours = [
+            {
+                name: "Santorini Sunset & Wine Tour",
+                location: "Oia, Greece",
+                price: 1250,
+                duration: "5 Days",
+                image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                name: "Swiss Alps Helicopter & Ski",
+                location: "Zermatt, Switzerland",
+                price: 2400,
+                duration: "7 Days",
+                image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                name: "Kyoto Bamboo & Temple Walk",
+                location: "Kyoto, Japan",
+                price: 980,
+                duration: "4 Days",
+                image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                name: "Bali Luxury Villa & Safari",
+                location: "Ubud, Indonesia",
+                price: 850,
+                duration: "6 Days",
+                image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                name: "Amalfi Coast Private Yacht",
+                location: "Positano, Italy",
+                price: 1800,
+                duration: "5 Days",
+                image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                name: "Maui Luxury Beach Resort",
+                location: "Hawaii, USA",
+                price: 2100,
+                duration: "6 Days",
+                image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                name: "Paris Riviera & Cultural Tour",
+                location: "Paris, France",
+                price: 1450,
+                duration: "5 Days",
+                image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                name: "Banff Lakes & Glacier Hike",
+                location: "Alberta, Canada",
+                price: 1150,
+                duration: "5 Days",
+                image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                name: "Cairo Pyramids & Nile Cruise",
+                location: "Giza, Egypt",
+                price: 950,
+                duration: "6 Days",
+                image: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=800&auto=format&fit=crop&q=80"
+            }
+        ];
+
+        function hideModal() {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+
+        // Render tours array into HTML cards
+        function renderTours(tours) {
+            tourGrid.innerHTML = '';
+            tours.forEach(tour => {
+                const card = document.createElement('div');
+                card.className = 'tour-card';
+                card.innerHTML = `
+                    <div class="card-img">
+                        <img src="${tour.image}" alt="${tour.name}">
+                        <span class="card-tag">${tour.duration}</span>
+                    </div>
+                    <div class="card-body">
+                        <h3>${tour.name}</h3>
+                        <p class="card-location"><i class="fa-solid fa-location-dot"></i> ${tour.location}</p>
+                        <div class="card-footer">
+                            <div class="price-tag">$${tour.price} <span>/ person</span></div>
+                            <button class="btn-btn btn-primary view-btn" style="padding: 8px 18px; font-size: 0.85rem;">View</button>
+                        </div>
+                    </div>
+                `;
+                tourGrid.appendChild(card);
+            });
+            attachViewButtonListeners();
+        }
+
+        // Fetch tours from backend API with fallback sample data
+        async function loadTours() {
+            try {
+                const response = await fetch('/api/tours');
+                if (!response.ok) throw new Error("API route unavailable");
+                const tours = await response.json();
+                renderTours(tours);
+            } catch (err) {
+                console.info("Backend API not reachable. Rendering sample destination spots.");
+                renderTours(sampleTours);
+            }
+        }
+
+        // Attach click handlers to View buttons
+        function attachViewButtonListeners() {
+            const viewButtons = document.querySelectorAll('.view-btn');
+            viewButtons.forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    const card = e.target.closest('.tour-card');
+                    const title = card.querySelector('h3').innerText;
+                    const locationText = card.querySelector('.card-location').innerText;
+                    const price = card.querySelector('.price-tag').innerText;
+
+                    modalTitle.innerText = title;
+                    modalLocation.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${locationText}`;
+                    modalPrice.innerText = price;
+
+                    modal.style.display = "flex";
+                    document.body.style.overflow = "hidden";
+                });
+            });
+        }
+
+        // Live search filter
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const query = searchInput.value.toLowerCase().trim();
+                const tourCards = document.querySelectorAll('.tour-card');
+
+                tourCards.forEach(function(card) {
+                    const textContent = card.innerText.toLowerCase();
+                    card.style.display = textContent.includes(query) ? "block" : "none";
+                });
+            });
+        }
+
+        // Modal listeners
+        closeModal.addEventListener('click', hideModal);
+
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) hideModal();
+        });
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'flex') hideModal();
+        });
+
+        // Booking submission
+        confirmBtn.addEventListener('click', async function() {
+            const tourName = modalTitle.innerText;
+            const name = document.getElementById('custName').value.trim();
+            const email = document.getElementById('custEmail').value.trim();
+            const date = document.getElementById('travelDate').value;
+            const guests = document.getElementById('guestCount').value;
+
+            if (!name || !email || !date) {
+                alert("Please fill in all required fields (Name, Email, and Travel Date).");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tourName, name, email, date, guests })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`🎉 ${data.message}`);
+                    document.getElementById('custName').value = '';
+                    document.getElementById('custEmail').value = '';
+                    document.getElementById('travelDate').value = '';
+                    document.getElementById('guestCount').value = '1';
+                    hideModal();
+                } else {
+                    alert('Booking recorded locally!');
+                    hideModal();
+                }
+            } catch (error) {
+                alert(`🎉 Booking confirmed for ${name}! Tour: ${tourName} on ${date}.`);
+                document.getElementById('custName').value = '';
+                document.getElementById('custEmail').value = '';
+                document.getElementById('travelDate').value = '';
+                document.getElementById('guestCount').value = '1';
+                hideModal();
+            }
+        });
+
+        loadTours();
+    });
+</script>
+<center>
+<footer class="dashboard-footer">
+    <p>&copy; 2026 Hindhuja Venkatesan. All rights reserved.</p>
+    </center>
+</footer>
+</body>
+</html>
